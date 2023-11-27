@@ -21,7 +21,7 @@ msgo2 db 10,13,'2.Opcion 2$'
 msgo3 db 10,13,'3.Atras$'
   
 salto db 10,13,'$'
-msg1.1 db ''
+msg1.1 db ''     
 .code
 .start
 
@@ -57,6 +57,7 @@ inicio:
     je final
 
 opcion1:
+    call clearscreen
     mov ah, 09h
     lea dx, msgs1
     int 21h
@@ -145,3 +146,14 @@ final:
 ; Terminar programa
     mov ax, 4C00h
     int 21h
+           
+    
+    
+clearscreen:
+    mov ah, 0  ; function 0 of INT 10h - set video mode
+    mov al, 3  ; video mode 3, which is text mode 80x25
+    int 10h    ; call interrupt 10h; Clear screen
+    mov ah, 0  ; function 0 of INT 10h - set video mode
+    mov al, 3  ; video mode 3, which is text mode 80x25
+    int 10h  
+    ret  ; call interrupt 10h
