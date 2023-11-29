@@ -18,7 +18,18 @@ msgs3 db 'Tematica seleccionada: Paises de Asia y de Africa$'
 msgo1 db 10,13,'1.Opcion 1$'
 msgo2 db 10,13,'2.Opcion 2$'
 msgo3 db 10,13,'3.Atras$'
-  
+
+msgj1 db 10,13,'Palabra: $'
+; Lista de palabras
+words db 'brasil$francia$peru$chile$alemania$', 0
+wordEnd db 0
+
+; Buffer para la palabra del usuario, ajustado para el servicio 0Ah
+userWord db 19, 0, 19 dup('$') ; Capacidad para 19 caracteres + longitud
+
+wordFound db 'Palabra encontrada$'
+wordNotFound db 'Palabra no encontrada$'
+
 salto db 10,13,'$'
 msg1.1 db ''     
 .code
@@ -121,7 +132,9 @@ sopa1 DB 10,13,'BRASILXXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXALEMANIAX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'$'
     mov dx, offset sopa1 ; Puntero al inicio de la sopa de letras
-    jmp imprimir
+    call imprimir
+    lea si, words
+    jmp principal
     
 printsopa2:   
 sopa2 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
@@ -134,10 +147,100 @@ sopa2 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
     mov dx, offset sopa2 ; Puntero al inicio de la sopa de letras
     jmp imprimir
   
-imprimir: 
+imprimir:
+    call clearscreen 
     mov ah, 09h          ; imprimir cadena
     int 21h              ; Interrupcion del DOS para imprimir
-    jmp final
+    ret
+    
+    
+principal:
+    mov ah, 09h
+    lea dx, msgj1
+    int 21h
+    lea dx, salto
+    int 21h
+    mov dx, offset userWord
+    mov ah, 0Ah
+    int 21h
+
+NextWord:
+    call CompareWords
+    jc PrintWordFound  ; Si se encontró la palabra, salta a PrintWordFound
+
+    ; Buscar el siguiente '$' para pasar a la siguiente palabra
+    call FindNextWord
+    cmp al, 0          ; Comprueba si hemos llegado al final de la lista
+    jne NextWord       ; Si no es el final, pasa a la siguiente palabra
+
+    ; Si no se encontró la palabra
+    mov dx, offset wordNotFound
+    jmp PrintMessage
+
+FindNextWord:
+    mov al, [si]
+    inc si
+    cmp al, '$'
+    je NextWord
+    cmp al, 0
+    jne FindNextWord
+    ret
+
+CompareWords:
+    push si            ; Guarda el valor original de SI
+    push di            ; Guarda el valor original de DI
+    push cx            ; Guarda el valor original de CX
+
+    mov di, offset userWord + 2 ; DI apunta al inicio de userWord
+    mov cx, 20                  ; Longitud máxima de userWord
+
+CompareLoop:
+    mov al, [si]                ; Carga un carácter de la palabra de la lista
+    mov ah, [di]                ; Carga un carácter de userWord
+
+    cmp al, '$'                 ; Comprueba si es el final de la palabra en la lista
+    je CheckEndOfUserWord       ; Si es el final, verifica el final de userWord
+
+    cmp ah, 0Dh                 ; Comprueba si es el final de userWord
+    je NotEqual                 ; Si es el final, las palabras no son iguales
+
+    cmp al, ah                  ; Compara los dos caracteres
+    jne NotEqual                ; Si son diferentes, salta a NotEqual
+
+    inc si                      ; Incrementa SI para apuntar al siguiente carácter
+    inc di                      ; Incrementa DI para apuntar al siguiente carácter
+    loop CompareLoop            ; Repite el bucle para el siguiente carácter
+
+CheckEndOfUserWord:
+    cmp ah, 0Dh                 ; Comprueba si userWord también terminó
+    je Equal                    ; Si es el final, las palabras son iguales
+
+NotEqual:
+    pop cx                      ; Restaura CX
+    pop di                      ; Restaura DI
+    pop si                      ; Restaura SI
+    clc                         ; Limpia el flag de carry
+    ret                         ; Retorna sin encontrar coincidencia
+
+Equal:
+    pop cx                      ; Restaura CX
+    pop di                      ; Restaura DI
+    pop si                      ; Restaura SI
+    stc                         ; Establece el flag de carry para indicar coincidencia
+    ret                         ; Retorna con coincidencia encontrada
+
+PrintWordFound:
+    mov dx, offset wordFound
+
+PrintMessage:
+    ; Imprimir el mensaje en DX
+    mov ah, 09h
+    int 21h
+
+    ; Terminar el programa
+    mov ax, 4C00h
+    int 21h
+
     
 final:
 ; Esperar una tecla para terminar
