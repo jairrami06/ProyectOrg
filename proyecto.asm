@@ -19,10 +19,18 @@ msgo1 db 10,13,'1.Opcion 1$'
 msgo2 db 10,13,'2.Opcion 2$'
 msgo3 db 10,13,'3.Atras$'
 
-msgj1 db 10,13,'Palabra: $'
+msgj1 db 10,13,'Palabra (0 para rendirse): $'
+
+msgf1 db '               Juego Terminado $'
+msgf2 db 10,13,'Felicidades!!! Ha adivinado las 5 palabras$'
+msgf3 db 10,13,'Se ha rendido$'
+
 ; Lista de palabras
 words db 'brasil$francia$peru$chile$alemania$', 0
 wordEnd db 0
+punteroasopa dw ?
+punteroapalabras dw ?
+contador db ?
 
 ; Buffer para la palabra del usuario, ajustado para el servicio 0Ah
 userWord db 19, 0, 19 dup('$') ; Capacidad para 19 caracteres + longitud
@@ -131,9 +139,9 @@ sopa1 DB 10,13,'BRASILXXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXXXXXXXXXX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXALEMANIAX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'$'
-    mov dx, offset sopa1 ; Puntero al inicio de la sopa de letras
+    mov punteroasopa, offset sopa1
+    mov punteroapalabras, offset words
     call imprimir
-    lea si, words
     jmp principal
     
 printsopa2:   
@@ -147,14 +155,17 @@ sopa2 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
     mov dx, offset sopa2 ; Puntero al inicio de la sopa de letras
     jmp imprimir
   
-imprimir:
+imprimir:    
+    mov dx, punteroasopa ; Puntero al inicio de la sopa de letras
+    mov si, punteroapalabras
     call clearscreen 
     mov ah, 09h          ; imprimir cadena
     int 21h              ; Interrupcion del DOS para imprimir
-    ret
+    ret                                                  
     
-    
-principal:
+principal: 
+    cmp contador, 5
+    jz final
     mov ah, 09h
     lea dx, msgj1
     int 21h
@@ -163,10 +174,20 @@ principal:
     mov dx, offset userWord
     mov ah, 0Ah
     int 21h
+    jmp verificar
+
+verificar:    
+    mov al, [userWord + 1] ; Carga el número de caracteres ingresados
+    cmp al, 1              ; Compara si solo se ingresó 1 carácter
+    jne NextWord           ; Salta a la etiqueta 'not_zero' si hay más de 1 carácter
+
+    mov al, [userWord + 2] ; Carga el primer (y único) carácter ingresado
+    cmp al, '0'            ; Compara con el carácter '0'
+    je final             ; Salta a 'is_zero' si el carácter es '0' 
 
 NextWord:
     call CompareWords
-    jc PrintWordFound  ; Si se encontró la palabra, salta a PrintWordFound
+    jc PrintMessageFound  ; Si se encontró la palabra, salta a PrintWordFound
 
     ; Buscar el siguiente '$' para pasar a la siguiente palabra
     call FindNextWord
@@ -174,8 +195,7 @@ NextWord:
     jne NextWord       ; Si no es el final, pasa a la siguiente palabra
 
     ; Si no se encontró la palabra
-    mov dx, offset wordNotFound
-    jmp PrintMessage
+    jmp PrintMessageNotFound
 
 FindNextWord:
     mov al, [si]
@@ -212,6 +232,7 @@ CompareLoop:
     loop CompareLoop            ; Repite el bucle para el siguiente carácter
 
 CheckEndOfUserWord:
+    inc bh
     cmp ah, 0Dh                 ; Comprueba si userWord también terminó
     je Equal                    ; Si es el final, las palabras son iguales
 
@@ -228,28 +249,46 @@ Equal:
     pop si                      ; Restaura SI
     stc                         ; Establece el flag de carry para indicar coincidencia
     ret                         ; Retorna con coincidencia encontrada
-
-PrintWordFound:
-    mov dx, offset wordFound
-
-PrintMessage:
+                 
+PrintMessageFound:
+    add contador, 1
+    call clearscreen
+    call imprimir
+    jmp principal
+    
+                 
+PrintMessageNotFound:
+    call clearscreen
+    call imprimir
     ; Imprimir el mensaje en DX
+    mov dx, offset wordNotFound
     mov ah, 09h
     int 21h
-
-    ; Terminar el programa
-    mov ax, 4C00h
-    int 21h
-
+    jmp principal    
     
 final:
-; Esperar una tecla para terminar
-    mov ah, 00h
-    int 16h
-; Terminar programa
+    call clearscreen
+    mov ah, 09h
+    lea dx, msgf1
+    int 21h
+    cmp contador, 5
+    je gano
+    jne perdio
+
+
+gano:
+    lea dx, msgf2
+    int 21h
+    ; Terminar programa
     mov ax, 4C00h
     int 21h
-           
+       
+perdio:
+    lea dx, msgf3
+    int 21h
+    ; Terminar programa
+    mov ax, 4C00h
+    int 21h           
     
     
 clearscreen:
