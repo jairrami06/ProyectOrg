@@ -31,18 +31,22 @@ words1_2 db 'brasil$francia$peru$chile$alemania$', 0
 words2_1 db 'brasil$francia$peru$chile$alemania$', 0
 words2_2 db 'brasil$francia$peru$chile$alemania$', 0
 words3_1 db 'brasil$francia$peru$chile$alemania$', 0
-words3_2 db 'brasil$francia$peru$chile$alemania$', 0
+words3_2 db 'brasil$francia$peru$chile$alemania$', 0  
 
-wordEnd db 0
+palabrasAdiv db 0, 0, 0, 0, 0 
+
+finDePalabra db 0
 pointersopa dw ?
-pointerwords dw ?
+pointerPalabras dw ?
 contador db ?
+indicePalabra dw ?
 
 ; Buffer para la palabra del usuario, ajustado para el servicio 0Ah
-userWord db 19, 0, 19 dup('$') ; Capacidad para 19 caracteres + longitud
+palabraUsuario db 19, 0, 19 dup('$') ; Capacidad para 19 caracteres + longitud
 
-wordFound db 'Palabra encontrada$'
-wordNotFound db 'Palabra no encontrada$'
+msgFound db 'Palabra encontrada$'
+msgNotFound db 'Palabra no encontrada$'
+msgGuessed db 'Palabra ya adivinada$'
 
 salto db 10,13,'$'
 msg1.1 db ''     
@@ -50,9 +54,9 @@ msg1.1 db ''
 .start
 
 
-; Inicio del programa
-inicio:
-    call clearscreen 
+; menu_inicio del programa
+menu_inicio:
+    call limpiarPantalla 
     mov ah, 09h
     lea dx, msgp
     int 21h
@@ -80,10 +84,10 @@ inicio:
     je opcion3
     cmp al, 4
     je final
-    jne inicio
+    jne menu_inicio
 
 opcion1:
-    call clearscreen
+    call limpiarPantalla
     mov ah, 09h
     lea dx, msgs1
     int 21h
@@ -104,7 +108,7 @@ opcion1:
     cmp al, 2 
     je printsopa1.2
     cmp al, 3
-    je inicio 
+    je menu_inicio 
     
 opcion2:
     mov ah, 09h
@@ -127,7 +131,7 @@ opcion2:
     cmp al, 2 
     je printsopa2.2
     cmp al, 3
-    je inicio   
+    je menu_inicio   
     
 
 opcion3:   
@@ -151,7 +155,7 @@ opcion3:
     cmp al, 2 
     je printsopa3.2
     cmp al, 3
-    je inicio  
+    je menu_inicio  
     
 printsopa1.1:       
     sopa1_1 DB 10,13,'I F H B R A S I L C F S M',0Dh,0Ah, 'V I A E K B P C I U M N B',0Dh,0Ah
@@ -162,9 +166,9 @@ printsopa1.1:
     DB 'X C A S E W O J K N M D A',0Dh,0Ah,'E I Q K S E L I H C S J U',0Dh,0Ah
     DB 'Q U W K S M M N X B H J O',0Dh,0Ah,'$'
     mov pointersopa, offset sopa1_1
-    mov pointerwords, offset words1_1
-    call imprimir
-    jmp principal
+    mov pointerPalabras, offset words1_1
+    call imprimirSopa
+    jmp pedirPalabra
     
 printsopa1.2:  
 sopa1_2 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
@@ -175,14 +179,11 @@ sopa1_2 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXALEMANIAX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'$'
     mov pointersopa, offset sopa1_2
-    mov pointerwords, offset words1_2
-    call imprimir
-    jmp principal
+    mov pointerPalabras, offset words1_2
+    call imprimirSopa
+    jmp pedirPalabra
     
-printsopa2.1:
-    mov ah, 09h
-    lea dx, msgs2
-    int 21h    
+printsopa2.1:   
 sopa2_1 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXXXXXXXXXX',0Dh,0Ah
      DB 'USAXXXXXXXXXX',0Dh,0Ah,'XXXXXXXXXXXXX',0Dh,0Ah
@@ -191,9 +192,9 @@ sopa2_1 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXALEMANIAX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'$'
     mov pointersopa, offset sopa2_1
-    mov pointerwords, offset words2_2
-    call imprimir
-    jmp principal
+    mov pointerPalabras, offset words2_2
+    call imprimirSopa
+    jmp pedirPalabra
     
 printsopa2.2:   
 sopa2_2 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
@@ -204,9 +205,9 @@ sopa2_2 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXALEMANIAX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'$'
     mov pointersopa, offset sopa2_2
-    mov pointerwords, offset words2_2
-    call imprimir
-    jmp principal  
+    mov pointerPalabras, offset words2_2
+    call imprimirSopa
+    jmp pedirPalabra  
     
 printsopa3.1:   
 sopa3_1 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
@@ -217,9 +218,9 @@ sopa3_1 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXALEMANIAX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'$'
     mov pointersopa, offset sopa3_1
-    mov pointerwords, offset words3_1
-    call imprimir
-    jmp principal
+    mov pointerPalabras, offset words3_1
+    call imprimirSopa
+    jmp pedirPalabra
   
 printsopa3.2:   
 sopa3_2 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
@@ -230,19 +231,19 @@ sopa3_2 DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXALEMANIAX',0Dh,0Ah
      DB 'XXXXXXXXXXXXX',0Dh,0Ah,'$'
     mov pointersopa, offset sopa3_2
-    mov pointerwords, offset words3_2
-    call imprimir
-    jmp principal
+    mov pointerPalabras, offset words3_2
+    call imprimirSopa
+    jmp pedirPalabra
   
-imprimir:    
-    mov dx, pointersopa ; Puntero al inicio de la sopa de letras
-    mov si, pointerwords
-    call clearscreen 
-    mov ah, 09h          ; imprimir cadena
-    int 21h              ; Interrupcion del DOS para imprimir
+imprimirSopa:    
+    mov dx, pointersopa ; Puntero al menu_inicio de la sopa de letras
+    mov si, pointerPalabras
+    call limpiarPantalla 
+    mov ah, 09h          ; imprimirSopa cadena
+    int 21h              ; Interrupcion del DOS para imprimirSopa
     ret                                                  
     
-principal: 
+pedirPalabra: 
     cmp contador, 5
     jz final
     mov ah, 09h
@@ -250,16 +251,17 @@ principal:
     int 21h
     lea dx, salto
     int 21h
-    lea dx, userWord
+    lea dx, palabraUsuario
     mov ah, 0Ah
     int 21h
-    jmp convertir_a_minusculas
+    jmp convertirAMinuscula
 
-convertir_a_minusculas:
-    lea bx, [userWord + 2]      ; Comienza en el tercer byte de userWord
-    mov cl, [userWord + 1]      ; Carga el número de caracteres ingresados en CL
+convertirAMinuscula:
+    mov indicePalabra, 0
+    lea bx, [palabraUsuario + 2]      ; Comienza en el tercer byte de palabraUsuario
+    mov cl, [palabraUsuario + 1]      ; Carga el número de caracteres ingresados en CL
     or cl, cl                   ; Verifica si CL es 0 (ningún carácter ingresado)
-    jz verificar                ; Si es 0, salta directamente a verificar
+    jz verificarPalabra                ; Si es 0, salta directamente a verificarPalabra
 
     convertir_loop:
         mov al, [bx]            ; Carga el carácter actual en AL
@@ -275,108 +277,132 @@ convertir_a_minusculas:
         dec cl                  ; Decrementa el contador de caracteres
         jnz convertir_loop      ; Continúa si aún hay caracteres por convertir
 
-    jmp verificar               ; Salta a verificar después de convertir
+    jmp verificarPalabra               ; Salta a verificarPalabra después de convertir
 
-verificar:    
-    mov al, [userWord + 1]      ; Carga el número de caracteres ingresados
+verificarPalabra:    
+    mov al, [palabraUsuario + 1]      ; Carga el número de caracteres ingresados
     cmp al, 1                   ; Compara si solo se ingresó 1 carácter
-    jne NextWord                ; Salta a la etiqueta 'NextWord' si hay más de 1 carácter
+    jne siguientePalabra                ; Salta a la etiqueta 'siguientePalabra' si hay más de 1 carácter
 
-    mov al, [userWord + 2]      ; Carga el primer (y único) carácter ingresado
+    mov al, [palabraUsuario + 2]      ; Carga el primer (y único) carácter ingresado
     cmp al, '0'                 ; Compara con el carácter '0'
     je final                    ; Salta a final si es '0'
-NextWord:
-    call CompareWords
-    jc PrintMessageFound  ; Si se encontró la palabra, salta a PrintWordFound
+    
+siguientePalabra:
+    add indicePalabra, 1
+    call compararPalabras
+    jc verificarAcierto  ; Si se encontró la palabra, salta a PrintmsgFound
 
     ; Buscar el siguiente '$' para pasar a la siguiente palabra
-    call FindNextWord
+    call encontrarSigPalabra
     cmp al, 0          ; Comprueba si hemos llegado al final de la lista
-    jne NextWord       ; Si no es el final, pasa a la siguiente palabra
+    jne siguientePalabra       ; Si no es el final, pasa a la siguiente palabra
 
     ; Si no se encontró la palabra
-    jmp PrintMessageNotFound
+    jmp palNoEncontrada
+                             
+verificarAcierto:    
+    sub indicePalabra, 1
+    mov si, indicePalabra
+    ; Verifica si el valor en la posición correspondiente es 0
+    mov al, [palabrasAdiv + si]  ; Carga el valor actual en la posición 'si' del arreglo
+    cmp al, 0                    ; Compara si el valor es 0
+    jne palYaAdivinada           ; Si no es 0, salta a la etiqueta 'palYaAdivinada'
 
-FindNextWord:
+    ; Cambia el valor a 1 si el valor anterior era 0
+    mov byte [palabrasAdiv + si], 1
+    jmp palabrasIguales                             
+                             
+                             
+encontrarSigPalabra:
     mov al, [si]
     inc si
     cmp al, '$'
-    je NextWord
+    je siguientePalabra
     cmp al, 0
-    jne FindNextWord
+    jne encontrarSigPalabra
     ret
 
-CompareWords:
+compararPalabras:
     push si            ; Guarda el valor original de SI
     push di            ; Guarda el valor original de DI
     push cx            ; Guarda el valor original de CX
 
-    mov di, offset userWord + 2 ; DI apunta al inicio de userWord
-    mov cx, 20                  ; Longitud máxima de userWord 
+    mov di, offset palabraUsuario + 2 ; DI apunta al menu_inicio de palabraUsuario
+    mov cx, 20                  ; Longitud máxima de palabraUsuario 
     mov bx, si                   ; BX guarda la posición inicial de la palabra en la lista
 
 
-CompareLoop:
+loopComparar:
     mov al, [si]                ; Carga un carácter de la palabra de la lista
-    mov ah, [di]                ; Carga un carácter de userWord
+    mov ah, [di]                ; Carga un carácter de palabraUsuario
 
     cmp al, '$'                 ; Comprueba si es el final de la palabra en la lista
-    je CheckEndOfUserWord       ; Si es el final, verifica el final de userWord
+    je CheckFinPalabraUsuario       ; Si es el final, verifica el final de palabraUsuario
 
-    cmp ah, 0Dh                 ; Comprueba si es el final de userWord
-    je NotEqual                 ; Si es el final, las palabras no son iguales
+    cmp ah, 0Dh                 ; Comprueba si es el final de palabraUsuario
+    je diferentes                 ; Si es el final, las palabras no son iguales
 
     cmp al, ah                  ; Compara los dos caracteres
-    jne NotEqual                ; Si son diferentes, salta a NotEqual
+    jne diferentes                ; Si son diferentes, salta a diferentes
 
     inc si                      ; Incrementa SI para apuntar al siguiente carácter
     inc di                      ; Incrementa DI para apuntar al siguiente carácter
-    loop CompareLoop            ; Repite el bucle para el siguiente carácter
+    loop loopComparar            ; Repite el bucle para el siguiente carácter
 
-CheckEndOfUserWord:
+CheckFinPalabraUsuario:
     inc bh
-    cmp ah, 0Dh                 ; Comprueba si userWord también terminó
-    je Equal                    ; Si es el final, las palabras son iguales
+    cmp ah, 0Dh                 ; Comprueba si palabraUsuario también terminó
+    je iguales                    ; Si es el final, las palabras son iguales
 
-NotEqual:
+diferentes:
     pop cx                      ; Restaura CX
     pop di                      ; Restaura DI
     pop si                      ; Restaura SI
     clc                         ; Limpia el flag de carry
     ret                         ; Retorna sin encontrar coincidencia
 
-Equal: 
+iguales: 
     pop cx                      ; Restaura CX
     pop di                      ; Restaura DI
     pop si                      ; Restaura SI
     stc                         ; Establece el flag de carry para indicar coincidencia
     ret                         ; Retorna con coincidencia encontrada
                  
-PrintMessageFound:
+palabrasIguales:
     add contador, 1
-    call clearscreen
-    call imprimir
-    jmp principal
+    call limpiarPantalla
+    call imprimirSopa
+    jmp pedirPalabra
     
                  
-PrintMessageNotFound:
-    call clearscreen
-    call imprimir
-    ; Imprimir el mensaje en DX
-    mov dx, offset wordNotFound
+palNoEncontrada:
+    call limpiarPantalla
+    call imprimirSopa
+    ; imprimirSopa el mensaje en DX
+    mov dx, offset msgNotFound
     mov ah, 09h
     int 21h
-    jmp principal    
-    
+    jmp pedirPalabra    
+                   
+ 
+palYaAdivinada:
+    call limpiarPantalla
+    call imprimirSopa
+    mov dx, offset msgGuessed
+    mov ah, 09h
+    int 21h
+    jmp pedirPalabra  
+     
+ 
 final:
-    call clearscreen
+    call limpiarPantalla
     mov ah, 09h
     lea dx, msgf1
     int 21h
     cmp contador, 5
     je gano
     jne perdio
-
 
 gano:
     lea dx, msgf2
@@ -393,11 +419,11 @@ perdio:
     int 21h           
     
     
-clearscreen:
+limpiarPantalla:
     mov ah, 0  ; function 0 of INT 10h - set video mode
     mov al, 3  ; video mode 3, which is text mode 80x25
     int 10h    ; call interrupt 10h; Clear screen
     mov ah, 0  ; function 0 of INT 10h - set video mode
     mov al, 3  ; video mode 3, which is text mode 80x25
     int 10h  
-    ret  ; call interrupt 10h    
+    ret  ; call interrupt 10h
