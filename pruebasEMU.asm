@@ -1,37 +1,47 @@
-data segment
- string db "proce'so'r"
- stringlen equ $-string   ; subtract current string's address from current address
-ends
+.model small
+.stack 100h
+.data
 
+; Lista de palabras
+words db 'brasil$francia$peru$chile$alemania$', 0  
+
+sopa DB 10,13,'BRASILXXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
+     DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXXXXXXXXXX',0Dh,0Ah
+     DB 'FRANCIAXXXXXX',0Dh,0Ah,'XXXXXXXXXXXXX',0Dh,0Ah
+     DB 'XXXXXXXXXXXXX',0Dh,0Ah,'CHILEXXXXXXXX',0Dh,0Ah
+     DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXXXXXXXXXX',0Dh,0Ah
+     DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXALEMANIAX',0Dh,0Ah
+     DB 'XXXXXXXXXXXXX',0Dh,0Ah,'$'
+     
+userWord db 19, 0, 19 dup('$')
+
+punteroasopa dw ?
+punteroapalabras dw ?
+contador db ?
+     
+; ... puedes agregar más palabras
+
+; Buffer para la palabra del usuario, ajustado para el servicio 0Ah longitud
+
+wordFound db 'Palabra encontrada$'
+wordNotFound db 'Palabra no encontrada$'
+
+.code
 start:
+    ; Inicializar segmento de datos
+    mov bx, offset sopa       ; BX apunta al inicio de sopa
+    mov ah, 0Eh               ; AH=0Eh para salida de teletipo
 
-    mov ax, data
-    mov ds, ax     ; Assuming rkhb is correct about segments
+print_loop:
+    mov al, [bx]              ; Carga el carácter actual en AL
+    cmp al, '$'               ; Comprueba si es el carácter de terminación
+    je  end_print             ; Si es así, salta al final
+    int 10h                   ; Imprime el carácter en pantalla
+    inc bx                    ; Incrementa el puntero para apuntar al siguiente carácter
+    jmp print_loop            ; Repite el bucle
 
-    lea   di, string
-    mov   cx, stringlen   ; having the assembler generate this constant from the length of the string prevents bugs if you change the string
+end_print:
+    ; Continúa con el resto de tu programa
 
-    ;; if stringlen can be zero:
-     ;  test cx,cx
-     ;  jz end
-
-    ;; .labels are "local" and don't end up as symbols in the object file, and don't have to be unique across functions
-    ;; emu8086 may not support them, and this Q is tagged as 8086, not just 16bit DOS on a modern CPU.
-    print_loop:
-        mov   dl, [di]
-        mov   ah, 02h  ; If int21h doesn't clobber ah, this could be hoisted out of the loop.  IDK.
-        int   21h 
-
-        inc   di
-        dec   cx
-        jg   print_loop  ;  or jne
-    end:
-
-          ;  Or save a register (and the mov to initialize it) with
-          ;   cmp  di, offset string+stringlen 
-          ;   jb   print_loop
-
-         ;; loop print_loop  ; or save instruction bytes, but slower on modern CPUs
-
-mov ax, 4c00h
-int 21h
+    
+    
