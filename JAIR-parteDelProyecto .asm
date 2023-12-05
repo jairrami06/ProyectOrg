@@ -55,8 +55,8 @@ start1:
     
    
     
-    mov si, offset sopa      ; BX apunta al inicio de sopa +258 no see porque pero funciona
     
+    mov si, offset sopa      ; BX apunta al inicio de sopa +258 no see porque pero funciona
     
     
     mov dx,si            ; Puntero al menu_inicio de la sopa de letras
@@ -67,8 +67,8 @@ start1:
 
 start:   
             
-            
-    
+    mov ch,1        ;HAYY QUE SETEAR EN 1 AL CONTAR LA PALABRA        
+    mov si, offset sopa      ; BX apunta al inicio de sopa +258 no see porque pero funciona
      
     
     
