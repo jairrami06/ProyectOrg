@@ -17,7 +17,7 @@ longitud DB 0
 
 
 
-indicePalabra DW 4
+indicePalabra DW 3
 
   
 ; Lista de palabras   
@@ -118,7 +118,7 @@ print_loop:
 
     mov al, [si]              ; Carga el carácter actual en AL
     cmp al, '$'               ; Comprueba si es el carácter de terminación
-    je  end_print             ; Si es así, salta al final
+    je  stop_print             ; Si es así, salta al final
                 ; Si es así, salta al final             ; Si es así, salta al final
                           ; Character to print 
                           
@@ -292,10 +292,4 @@ stop_print:
     
     
     
-    
-    
-end_print:
-    ; Imprimir el mensaje final
-    ; Finalizar el programa
-    mov ax, 4C00h
-    int 21h 
+   

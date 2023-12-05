@@ -1,0 +1,17 @@
+América y Europa:
+	Sopa 1:
+		brasil, peru, francia, alemania, chile	
+	Sopa 2:
+		portugal, cuba, haiti, suiza, rumania
+
+Ciudades de ecuador:
+	Sopa 1:
+		puyo, quito, loja , tena, manta
+	Sopa 2:
+		duran, daule, chone , guayaquil ,macas
+
+Países de áfrica y asia:
+	Sopa 1:
+		iran, irak, ghana, mali , china
+	Sopa 2: 
+		india, niger, yemen, laos, taiwan

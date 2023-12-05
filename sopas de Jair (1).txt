@@ -1,0 +1,114 @@
+Países de américa y de Europa:
+
+words1_1 db 'brasil$peru$francia$alemania$chile$', 0
+
+              ;brasil       ;peru            ;fRANCIA      ;Alemania	   ;CHILE
+datos_sopa DB 1 , 3 , 1 , 6 , 2 , 6 , 2 , 4 , 4 , 1 , 3 ,7 , 10, 0 , 1 ,8 , 12 , 5  ,1 ,5  
+
+sopa DB 10,13,'IFHBRASILCFSM',0Dh,0Ah,'VIAEKBPCIUMNB',0Dh,0Ah
+            DB 'LPOIQSEHAQWTE',0Dh,0Ah,'AFRTQWRASDJKL',0Dh,0Ah
+            DB 'ACRNTYUZXCVCU',0Dh,0Ah,'XQZAIAMONXZBN',0Dh,0Ah
+            DB 'XCBVNHILAPLQS',0Dh,0Ah,'ZPOLSCQJAANJH',0Dh,0Ah
+            DB 'QOLSZMINBTREW',0Dh,0Ah,'ALEMANIAIEKSN',0Dh,0Ah
+            DB 'XCASEWOJKNMDA',0Dh,0Ah,'EIQKSCHILECSJ',0Dh,0Ah
+            DB 'QUWKSMMNXBHJO',0Dh,0Ah,'$'
+
+
+
+words1_1 db 'portugal$cuba$argentina$uruguay$romania$', 0
+
+              ;portugal       ;CUBA          ;haiti          ;SUIZA	   ;romania
+
+datos_sopa DB 1 , 0 , 1 , 8 , 2 , 2 , 3 , 4 , 4 , 2 , 3 ,5 , 4, 7 , 1 ,5 , 9 , 0  ,1 ,7  
+
+sopa DB 10,13, 'PORTUGALLCFAM',0Dh,0Ah,'VICEKBPCIUMRB',0Dh,0Ah
+            DB 'LPOUQSEHAQWGE',0Dh,0Ah,'AFhTBWRASDJEL',0Dh,0Ah
+            DB 'ACUaTAUSUIZAU',0Dh,0Ah,'XQZAiADONXZTN',0Dh,0Ah
+            DB 'XCBVNtIOAPLIS',0Dh,0Ah,'ZPOLSCiJRANNH',0Dh,0Ah
+            DB 'ROMANIANBTRAW',0Dh,0Ah,'ALXLSSIAIEKSN',0Dh,0Ah
+            DB 'XCASEWOJKNMDA',0Dh,0Ah,'EIQKSCHILECSJ',0Dh,0Ah
+            DB 'QUWKSMMNXBHJO',0Dh,0Ah,'$'
+
+
+
+
+
+CIUDADES DE ECUADOR
+
+
+
+
+
+words1_1 db 'puyo$quito$loja$tena$manta$', 0
+
+              ;puyo           ;quito         ;loja           ;tena	    ;manta
+
+datos_sopa DB 1 , 12 , 2 , 4 , 1, 0 , 3 , 5 , 5 , 0 , 1 ,4 , 6 , 8  ,1 ,5 , 1 , 2  ,1 ,5 
+
+sopa DB 10,13, 'QMMANTAAQUILP',0Dh,0Ah,'DUQEKBPCIUMRU',0Dh,0Ah
+            DB 'JUIUQSEHAQWGY',0Dh,0Ah,'AFRTIdauleJEO',0Dh,0Ah
+            DB 'LOJAOaUSUIZAE',0Dh,0Ah,'DUZAIAOOmtena',0Dh,0Ah
+            DB 'XUBVNHIOAPLIS',0Dh,0Ah,'ZPRLSCQJRANNH',0Dh,0Ah
+            DB 'ROMANIANBTRAW',0Dh,0Ah,'ALEMNNIAIEKSN',0Dh,0Ah
+            DB 'XCASEWOJKNMDA',0Dh,0Ah,'EIQKSCHILECSJ',0Dh,0Ah
+            DB 'QUWKSMMNXBHJO',0Dh,0Ah,'$'
+
+
+
+words1_1 db 'duran$daule$chone$guayaquil$macas$', 0
+
+              ;duran         ;daule          ;chone           ;guayaquil    ;chone
+
+datos_sopa DB 6 , 0 , 3 , 5 , 4 , 5 , 1 , 5 , 1 , 12 , 2 ,5 , 1, 2 , 1 ,9 , 6 , 8  ,1 ,5  
+
+sopa DB 10,13, 'LOGUAYAQUILPC',0Dh,0Ah,'DIQEKBPCIUMRH',0Dh,0Ah
+            DB 'JUOUQSEHAQWGO',0Dh,0Ah,'AFRTIdauleJEN',0Dh,0Ah
+            DB 'ACtenaUSUIZAE',0Dh,0Ah,'DUZAIAOOmacas',0Dh,0Ah
+            DB 'XUBVNHIOAPLIS',0Dh,0Ah,'ZPRLSCQJRANNH',0Dh,0Ah
+            DB 'ROMANIANBTRAW',0Dh,0Ah,'ALEMNNIAIEKSN',0Dh,0Ah
+            DB 'XCASEWOJKNMDA',0Dh,0Ah,'EIQKSCHILECSJ',0Dh,0Ah
+            DB 'QUWKSMMNXBHJO',0Dh,0Ah,'$'
+
+
+
+
+
+PAISES DE AFRICA Y ASIA
+
+
+
+
+
+words1_1 db 'iran$irak$ghana$mali$china$', 0
+
+              ;iran          ;irak           ;ghana           ;mali	    ;china
+
+datos_sopa DB 6 , 9  ,1 ,4  , 2 , 9 , 1 , 4 , 1 , 4 , 1 ,5 , 1, 0 , 2 ,4 , 2 , 2  ,3 ,5  
+
+sopa DB 10,13, 'MORXGHANAPXYO',0Dh,0Ah,'AICEKBPCIIRAK',0Dh,0Ah
+            DB 'LPOHQSEHAQWGO',0Dh,0Ah,'IFRTIWRASDJEJ',0Dh,0Ah
+            DB 'ACtenNUSUIZAA',0Dh,0Ah,'XQZAIAAOmIRAN',0Dh,0Ah
+            DB 'XCBVNHIOAPLIS',0Dh,0Ah,'ZPOLSCQJRANNH',0Dh,0Ah
+            DB 'ROMANIANBTRAW',0Dh,0Ah,'ALEMANIAIEKSN',0Dh,0Ah
+            DB 'XCASEWOJKNMDA',0Dh,0Ah,'EIQKSCHILECSJ',0Dh,0Ah
+            DB 'QUWKSMMNXBHJO',0Dh,0Ah,'$'
+
+
+words1_1 db 'india$niger$yemen$laos$taiwan$', 0
+
+              ;india         ;niger          ;yemen           ;laos        ;taiwan
+
+datos_sopa DB 1 , 0 , 3 , 5 , 1 , 8 , 1 , 5 , 2 , 12 , 2 ,5 , 6, 8 , 1 ,4 , 4 , 5  ,1 ,6   
+
+sopa DB 10,13, 'IOGUAYAQNIGER',0Dh,0Ah,'DNQEKBPCIUMRY',0Dh,0Ah
+            DB 'JUDUQSEHAQWGE',0Dh,0Ah,'AFRIItaiwanJM',0Dh,0Ah
+            DB 'ACteAaUSUIZAE',0Dh,0Ah,'DUZAIAOOlaosN',0Dh,0Ah
+            DB 'XUBVNHIOAPLIS',0Dh,0Ah,'ZPRLSCQJRANNH',0Dh,0Ah
+            DB 'ROMANIANBTRAW',0Dh,0Ah,'ALEMNNIAIEKSN',0Dh,0Ah
+            DB 'XCASEWOJKNMDA',0Dh,0Ah,'EIQKSCHILECSJ',0Dh,0Ah
+            DB 'QUWKSMMNXBHJO',0Dh,0Ah,'$'
+
+
+
+
+
