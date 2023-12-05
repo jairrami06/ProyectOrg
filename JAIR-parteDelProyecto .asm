@@ -2,11 +2,10 @@
 org 100h                  
 .data
 
-                   
-palabra DB 'Ecuador' 
+                    
+              ;brasil       ;peru            ;fRANCIA
 
-
-datos_sopa DB 1 , 0 , 1 , 7 , 2 , 6 , 1 , 4 , 5 , 0 , 1 ,3 , 8 ,0 , 1 , 5 , 12 , 4 , 1 , 8 ;; POR ALGUNA RAZON SE DEBE EMPEZZAR DESDE LA FILA 1 ( QUE ES 0)
+datos_sopa DB 1 , 3 , 1 , 6 , 2 , 6 , 2 , 4 , 4 , 1 , 3 ,7  ;; POR ALGUNA RAZON SE DEBE EMPEZZAR DESDE LA FILA 1 ( QUE ES 0)
                         
                                                 
 
@@ -18,18 +17,19 @@ longitud DB 0
 
 
 
-indicePalabra DW 0
+indicePalabra DW 2
 
   
 ; Lista de palabras   
 
-sopa DB 10,13,'ECUADORXXXXXX',0Dh,0Ah,'XXXXXXPERUXXX',0Dh,0Ah
-           DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXXXXXXXXXX',0Dh,0Ah
-           DB 'USAXXXXXXXXXX',0Dh,0Ah,'XXXXXXXXXXXXX',0Dh,0Ah
-           DB 'XXXXXXXXXXXXX',0Dh,0Ah,'CHILEXXXXXXXX',0Dh,0Ah
-           DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXXXXXXXXXX',0Dh,0Ah
-           DB 'XXXXXXXXXXXXX',0Dh,0Ah,'XXXXALEMANIAX',0Dh,0Ah
-           DB 'XXXXXXXXXXXXX',0Dh,0Ah,'$'
+sopa DB 10,13,'IFHBRASILCFSM',0Dh,0Ah,'VIAEKBPCIUMNB',0Dh,0Ah
+            DB 'LPOIQSEHAQWTE',0Dh,0Ah,'AFRTQWRASDJKL',0Dh,0Ah
+            DB 'ACRNTYUZXCVCU',0Dh,0Ah,'XQZAIAMONXZBN',0Dh,0Ah
+            DB 'XCBVNHILAPLQS',0Dh,0Ah,'ZPOLSCQJAANJH',0Dh,0Ah
+            DB 'QOLSZMINBTREW',0Dh,0Ah,'ALEMANIAIEKSN',0Dh,0Ah
+            DB 'XCASEWOJKNMDA',0Dh,0Ah,'EIQKSELICHCSJ',0Dh,0Ah
+            DB 'QUWKSMMNXBHJO',0Dh,0Ah,'$'
+
 
 ; Buffer para la palabra del usuario, ajustado para el servicio 0Ah
                                          
@@ -131,7 +131,9 @@ print_loop:
       
     
     cmp dl,columna
-    je  resaltar_test 
+    je  resaltar_test
+    
+     
     
                                           
     
@@ -151,8 +153,15 @@ print_loop:
 resaltar_test:   
     
     
+    push cx
+    mov cl, fila
     cmp dh, fila   ; evaluo i fila
     je resaltar
+    
+    pop cx
+    
+    
+   
      
    
     cmp dl,13
@@ -199,21 +208,22 @@ resaltar:
     
   
     ; Compare ch with the value at the memory address pointed by ax
-
-         
+     
     cmp ch, longitud   ;COMPARO LONGITUD ; aqui no se porque se guarda 04 00 
     je stop_print 
     
+    
+    pop cx
     
   
     
     cmp orientacion, 1
     je horizontal
     
-    cmp bh, 2
+    cmp orientacion, 2
     je vertical
     
-    cmp bh, 3
+    cmp orientacion, 3
     je diagonal
     
                        ; Incrementa el puntero para apuntar al siguiente carácter
@@ -227,7 +237,7 @@ horizontal:
    inc columna
 
    
-   inc ch  
+   inc ch ; contador de longitud 
    
    jmp print_loop
    
@@ -238,7 +248,7 @@ vertical:
    inc fila
  
    
-   inc ch  
+   inc ch ; contador de longitud 
    
    jmp print_loop
 
@@ -280,8 +290,6 @@ stop_print:
     mov     dl, 0   ; columna actual.
     mov     dh, 1   ; fila actual. 
     
-    mov indicePalabra, 1
-    jmp start
     
     
     
