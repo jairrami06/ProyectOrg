@@ -3,9 +3,9 @@ org 100h
 .data
 
                     
-              ;brasil       ;peru            ;fRANCIA
+              ;brasil       ;peru            ;fRANCIA      ;Alemania        ;ELICH
 
-datos_sopa DB 1 , 3 , 1 , 6 , 2 , 6 , 2 , 4 , 4 , 1 , 3 ,7  ;; POR ALGUNA RAZON SE DEBE EMPEZZAR DESDE LA FILA 1 ( QUE ES 0)
+datos_sopa DB 1 , 3 , 1 , 6 , 2 , 6 , 2 , 4 , 4 , 1 , 3 ,7 , 10, 0 , 1 ,8 , 12 , 5  ,1 ,5   ;; POR ALGUNA RAZON SE DEBE EMPEZZAR DESDE LA FILA 1 ( QUE ES 0)
                         
                                                 
 
@@ -17,7 +17,7 @@ longitud DB 0
 
 
 
-indicePalabra DW 2
+indicePalabra DW 4
 
   
 ; Lista de palabras   
